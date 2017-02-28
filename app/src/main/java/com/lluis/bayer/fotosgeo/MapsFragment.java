@@ -1,16 +1,26 @@
 package com.lluis.bayer.fotosgeo;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 
 
 /**
@@ -18,7 +28,7 @@ import org.osmdroid.views.MapView;
  */
 public class MapsFragment extends Fragment {
 
-
+    Context mContext;
     MapView map;
     public MapsFragment() {
         // Required empty public constructor
@@ -29,19 +39,94 @@ public class MapsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        mContext = getContext();
         View fragment = inflater.inflate(R.layout.fragment_maps, container, false);
-        System.out.println("inflate maps");
         map = (MapView) fragment.findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.setBuiltInZoomControls(false);
         map.setMultiTouchControls(true);
+
 
         IMapController mapController = map.getController();
         mapController.setZoom(20);
         GeoPoint startPoint = new GeoPoint(41.390205, 2.154007);
         mapController.setCenter(startPoint);
 
+        final RadiusMarkerClusterer poiMarkers = new RadiusMarkerClusterer(mContext);
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+
+                // A new media has been added, add it to the displayed list
+                try {
+                    Media media = dataSnapshot.getValue(Media.class);
+                    Marker startMarker = new Marker(map);
+                    startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
+                    poiMarkers.add(startMarker);
+                    map.invalidate();
+                }catch(NullPointerException e){
+
+                }catch(NumberFormatException e){
+
+                }
+                // ...
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                // ...
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                // ...
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                // ...
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        ((MainActivity)getActivity()).getDB().addChildEventListener(childEventListener);
+
+        /**
+        ((MainActivity)getActivity()).getDB().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    try {
+                        Media media = postSnapshot.getValue(Media.class);
+                        Marker startMarker = new Marker(map);
+                        startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
+                        poiMarkers.add(startMarker);
+                    }catch(NullPointerException e){
+
+                    }catch(NumberFormatException e){
+
+                    }
+                    // TODO: handle the post
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+            }
+        });**/
+
+        map.getOverlays().add(poiMarkers);
+        map.invalidate();
+
         return fragment;
     }
+
+
+
 
 }

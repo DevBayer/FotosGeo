@@ -1,12 +1,11 @@
 package com.lluis.bayer.fotosgeo;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,14 +13,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ResultCodes;
 import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -39,8 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private FirebaseAuth mAuth;
-    private static final int RC_SIGN_IN = 123;
+
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_TAKE_VIDEO = 2;
 
@@ -56,12 +53,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        doAuth();
+        Intent intent = getIntent();
+        String uuid = intent.getStringExtra("uuid");
 
+        System.out.println(uuid);
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        userStorage = mStorageRef.child(mAuth.getCurrentUser().getUid());
-        userDatabase = mDatabaseRef.child(mAuth.getCurrentUser().getUid());
+        userStorage = mStorageRef.child(uuid);
+        userDatabase = mDatabaseRef.child(uuid);
+
 
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -207,29 +207,59 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_TAKE_PHOTO || requestCode == REQUEST_TAKE_VIDEO){
-            if(resultCode == RESULT_OK){
+        if(requestCode == REQUEST_TAKE_PHOTO || requestCode == REQUEST_TAKE_VIDEO) {
+            if (resultCode == RESULT_OK) {
                 StorageReference uploadRef = userStorage.child(file.getName());
                 uploadRef.putFile(Uri.fromFile(file));
                 String lat = null;
                 String lon = null;
                 try {
                     ExifInterface exif = new ExifInterface(file.getAbsolutePath());
-                    System.out.println(exif.getAttribute(ExifInterface.TAG_DATETIME));
-                    lat = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                    lon = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                }catch(IOException e){
+                    String LATITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    String LATITUDE_REF = exif
+                            .getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                    String LONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    String LONGITUDE_REF = exif
+                            .getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+
+                    Double Latitude = null, Longitude = null;
+
+                    if ((LATITUDE != null) && (LATITUDE_REF != null) && (LONGITUDE != null)
+                            && (LONGITUDE_REF != null)) {
+
+                        if (LATITUDE_REF.equals("N")) {
+                            Latitude = convertToDegree(LATITUDE);
+                            lat = ""+Latitude;
+                        } else {
+                            Latitude = 0 - convertToDegree(LATITUDE);
+                            lat = ""+Latitude;
+                        }
+
+                        if (LONGITUDE_REF.equals("E")) {
+                            Longitude = convertToDegree(LONGITUDE);
+                            lon = ""+Longitude;
+                        } else {
+                            Longitude = 0 - convertToDegree(LONGITUDE);
+                            lon = ""+Longitude;
+                        }
+
+                    }
+
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 GPSTracker gps = new GPSTracker(this);
-                if(lat == null && gps.canGetLocation()){
+                if (lat == null && gps.canGetLocation()) {
                     double latitude = gps.getLatitude();
-                    lat = String.valueOf(latitude);
+                    lat = ""+latitude;
                 }
-                if(lon == null && gps.canGetLocation()){
+                if (lon == null && gps.canGetLocation()) {
                     double longitude = gps.getLongitude();
-                    lon = String.valueOf(longitude);
+                    lon = ""+longitude;
                 }
+
+
+
                 Media media = new Media(uploadRef.getName(), (requestCode == REQUEST_TAKE_PHOTO ? "photo" : "video"), file.getAbsolutePath(), lat, lon);
                 userDatabase.push().setValue(media);
 
@@ -237,21 +267,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void doAuth(){
-        mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() != null) {
-            Log.d("Current user", String.valueOf(mAuth.getCurrentUser()));
-        } else {
-            startActivityForResult(
-                    // Get an instance of AuthUI based on the default app
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setIsSmartLockEnabled(false)
-                            .setProviders(Arrays.asList(
-                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build())
-                            )
-                            .build(),
-                    RC_SIGN_IN);}
-    }
 
+    private Double convertToDegree(String location) {
+        Double result = null;
+        String[] DMS = location.split(",", 3);
+
+        String[] stringD = DMS[0].split("/", 2);
+        Double D0 = new Double(stringD[0]);
+        Double D1 = new Double(stringD[1]);
+        Double FloatD = D0 / D1;
+
+        String[] stringM = DMS[1].split("/", 2);
+        Double M0 = new Double(stringM[0]);
+        Double M1 = new Double(stringM[1]);
+        Double FloatM = M0 / M1;
+
+        String[] stringS = DMS[2].split("/", 2);
+        Double S0 = new Double(stringS[0]);
+        Double S1 = new Double(stringS[1]);
+        Double FloatS = S0 / S1;
+
+        result = new Double(FloatD + (FloatM / 60) + (FloatS / 3600));
+
+        return result;
+
+    };
 }

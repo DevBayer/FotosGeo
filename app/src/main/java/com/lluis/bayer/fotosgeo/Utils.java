@@ -54,23 +54,4 @@ public class Utils {
         //mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }
-
-    public static Bitmap getVideoFrame(Context context, Uri uri) {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(uri.toString(),new HashMap<String, String>());
-            return retriever.getFrameAtTime();
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-        } catch (RuntimeException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                retriever.release();
-            } catch (RuntimeException ex) {
-            }
-        }
-        return null;
-    }
-
 }
