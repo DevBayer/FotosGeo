@@ -21,13 +21,4 @@ public class Media {
         this.lat = lat;
         this.lon = lon;
     }
-
-    /*public Double getDoubleLatitude(){
-        return Double.parseDouble(lat);
-    }
-
-    public Double getDoubleLongitude(){
-        return Double.parseDouble(lon);
-    }*/
-
 }

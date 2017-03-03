@@ -2,7 +2,6 @@ package com.lluis.bayer.fotosgeo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private NavigationView nav;
 
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_TAKE_VIDEO = 2;
@@ -58,52 +58,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
         Intent intent = getIntent();
         String uuid = intent.getStringExtra("uuid");
 
         userStorage = mStorageRef.child(uuid);
         userDatabase = mDatabaseRef.child(uuid);
-
-
-        setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().hide();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
         fab_photo = (FloatingActionButton) findViewById(R.id.fab_photo);
         fab_video = (FloatingActionButton) findViewById(R.id.fab_video);
+        nav = (NavigationView) findViewById(R.id.nvView);
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().hide();
+        setupViewPager(viewPager);
+        setupNavigationView();
+        setupNavigationListener();
+        setupFloatingActionButtons();
+    }
+
+    private void setupFloatingActionButtons() {
         fab_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
             }
         });
-
         fab_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakeVideoIntent();
             }
         });
+    }
 
-        NavigationView nav = (NavigationView) findViewById(R.id.nvView);
-        ImageView userimg = (ImageView) nav.getHeaderView(0).findViewById(R.id.userPhoto);
-        Glide.with(this)
-                .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
-                .centerCrop()
-                .into(userimg);
-        TextView username = (TextView) nav.getHeaderView(0).findViewById(R.id.userName);
-        username.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        TextView usermail = (TextView) nav.getHeaderView(0).findViewById(R.id.userEmail);
-        usermail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-
-
+    private void setupNavigationListener() {
         final Activity activity = this;
         nav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -123,9 +116,19 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
     }
 
+    private void setupNavigationView() {
+        ImageView userimg = (ImageView) nav.getHeaderView(0).findViewById(R.id.userPhoto);
+        Glide.with(this)
+                .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+                .centerCrop()
+                .into(userimg);
+        TextView username = (TextView) nav.getHeaderView(0).findViewById(R.id.userName);
+        username.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        TextView usermail = (TextView) nav.getHeaderView(0).findViewById(R.id.userEmail);
+        usermail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+    }
 
 
     @Override

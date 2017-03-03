@@ -1,20 +1,11 @@
 package com.lluis.bayer.fotosgeo;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-
 /**
  * Created by 23878410v on 14/02/17.
  */
