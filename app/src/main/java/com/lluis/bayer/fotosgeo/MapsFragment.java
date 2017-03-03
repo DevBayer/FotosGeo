@@ -48,9 +48,16 @@ public class MapsFragment extends Fragment {
 
 
         IMapController mapController = map.getController();
-        mapController.setZoom(20);
-        GeoPoint startPoint = new GeoPoint(41.390205, 2.154007);
-        mapController.setCenter(startPoint);
+        mapController.setZoom(18);
+
+        GPSTracker tracker = new GPSTracker(getContext());
+        if(tracker.canGetLocation()){
+            GeoPoint startPoint = new GeoPoint(tracker.getLatitude(), tracker.getLongitude());
+            mapController.setCenter(startPoint);
+        }else{
+            GeoPoint startPoint = new GeoPoint(41.390205, 2.154007);
+            mapController.setCenter(startPoint);
+        }
 
         final RadiusMarkerClusterer poiMarkers = new RadiusMarkerClusterer(mContext);
         ChildEventListener childEventListener = new ChildEventListener() {
@@ -63,12 +70,12 @@ public class MapsFragment extends Fragment {
                     Marker startMarker = new Marker(map);
                     startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
                     poiMarkers.add(startMarker);
-                    map.invalidate();
                 }catch(NullPointerException e){
 
                 }catch(NumberFormatException e){
 
                 }
+                map.invalidate();
                 // ...
             }
 
@@ -94,31 +101,6 @@ public class MapsFragment extends Fragment {
         };
 
         ((MainActivity)getActivity()).getDB().addChildEventListener(childEventListener);
-
-        /**
-        ((MainActivity)getActivity()).getDB().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                    try {
-                        Media media = postSnapshot.getValue(Media.class);
-                        Marker startMarker = new Marker(map);
-                        startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
-                        poiMarkers.add(startMarker);
-                    }catch(NullPointerException e){
-
-                    }catch(NumberFormatException e){
-
-                    }
-                    // TODO: handle the post
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-            }
-        });**/
 
         map.getOverlays().add(poiMarkers);
         map.invalidate();

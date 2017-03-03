@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.StorageReference;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;
 
@@ -24,6 +25,7 @@ import java.io.File;
 public class GalleryFragment extends Fragment {
 
     private FirebaseListAdapter mAdapter;
+    private AVLoadingIndicatorView avi;
 
     public GalleryFragment() {
     }
@@ -33,11 +35,18 @@ public class GalleryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View fragment = inflater.inflate(R.layout.fragment_main, container, false);
 
+        avi= (AVLoadingIndicatorView) fragment.findViewById(R.id.avi);
+        avi.setIndicator("BallPulseIndicator");
+        avi.show();
+
         GridView gallery = (GridView) fragment.findViewById(R.id.gallery);
 
         mAdapter = new FirebaseListAdapter<Media>(getActivity(), Media.class, R.layout.gridview_media, ((MainActivity)getActivity()).getDB()) {
             @Override
             protected void populateView(View view, Media media, int position) {
+                if(avi.isEnabled()){
+                    avi.hide();
+                }
                     ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
                     File f = new File(media.absolutePath);
                     if (f.exists()) {

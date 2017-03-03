@@ -6,4 +6,7 @@
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
     <color name="colorAccent">#c8e8ff</color>
+    <color name="appPrimaryColor">#ff5350</color>
+    <color name="appPrimaryText">#ae0300</color>
+    <color name="appColorWhite">#fff</color>
 </resources>

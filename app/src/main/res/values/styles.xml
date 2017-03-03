@@ -23,10 +23,22 @@
 
     <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="windowActionBar">true</item>
+        <item name="colorPrimary">@color/appPrimaryColor</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/appPrimaryText</item>
+        <item name="android:titleTextStyle">@color/appColorWhite</item>
+        <item name="android:textColor">@color/appColorWhite</item>
+        <item name="android:actionMenuTextColor">@color/appColorWhite</item>
+        <item name="android:textColorPrimary">@color/appColorWhite</item>
+        <item name="android:colorBackground">@color/appColorWhite</item>
+    </style>
+
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
 </resources>
