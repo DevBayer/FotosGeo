@@ -68,6 +68,11 @@ public class MapsFragment extends Fragment {
                 try {
                     Media media = dataSnapshot.getValue(Media.class);
                     Marker startMarker = new Marker(map);
+                    if(media.type.equals("photo")){
+                        startMarker.setIcon(getResources().getDrawable(R.drawable.ic_photo_camera_black_24px));
+                    }else{
+                        startMarker.setIcon(getResources().getDrawable(R.drawable.ic_videocam_black_24px));
+                    }
                     startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
                     poiMarkers.add(startMarker);
                 }catch(NullPointerException e){

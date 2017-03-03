@@ -44,7 +44,7 @@ public class StartUpActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if(resultCode == ResultCodes.OK){
                 Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("response", response.getIdpToken());
+                intent.putExtra("uuid", FirebaseAuth.getInstance().getCurrentUser().getUid());
                 startActivity(intent);
                 finish();
             }

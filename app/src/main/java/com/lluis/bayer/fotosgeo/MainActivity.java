@@ -16,11 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ResultCodes;
 import com.github.clans.fab.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -29,7 +25,6 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,22 +38,18 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab_photo;
     private FloatingActionButton fab_video;
-    private StorageReference mStorageRef;
+    private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private StorageReference userStorage;
-    private DatabaseReference mDatabaseRef;
+    private DatabaseReference mDatabaseRef = FirebaseDatabase.getInstance().getReference();
     private DatabaseReference userDatabase;
     private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Intent intent = getIntent();
         String uuid = intent.getStringExtra("uuid");
 
-        System.out.println(uuid);
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
         userStorage = mStorageRef.child(uuid);
         userDatabase = mDatabaseRef.child(uuid);
 
