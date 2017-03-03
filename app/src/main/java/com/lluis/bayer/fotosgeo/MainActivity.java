@@ -1,11 +1,14 @@
 package com.lluis.bayer.fotosgeo;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +19,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.auth.AuthUI;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -81,6 +92,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        NavigationView nav = (NavigationView) findViewById(R.id.nvView);
+        ImageView userimg = (ImageView) nav.getHeaderView(0).findViewById(R.id.userPhoto);
+        Glide.with(this)
+                .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+                .centerCrop()
+                .into(userimg);
+        TextView username = (TextView) nav.getHeaderView(0).findViewById(R.id.userName);
+        username.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        TextView usermail = (TextView) nav.getHeaderView(0).findViewById(R.id.userEmail);
+        usermail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
+
+        final Activity activity = this;
+        nav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if(id == R.id.logout){
+                    AuthUI.getInstance()
+                            .signOut(activity)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    // user is now signed out
+                                    startActivity(new Intent(MainActivity.this, StartUpActivity.class));
+                                    finish();
+                                }
+                            });
+                }
+                return false;
+            }
+        });
+
     }
 
 
@@ -106,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        System.out.println(id);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;

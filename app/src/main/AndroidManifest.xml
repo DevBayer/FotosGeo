@@ -25,11 +25,11 @@
             android:theme="@style/MyMaterialTheme.Base">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
             </intent-filter>
         </activity>
-        <activity android:name=".StartUpActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
+        <activity
+            android:name=".StartUpActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
