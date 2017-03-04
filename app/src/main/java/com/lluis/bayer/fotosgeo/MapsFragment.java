@@ -3,6 +3,7 @@ package com.lluis.bayer.fotosgeo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 
 /**
@@ -82,17 +84,8 @@ public class MapsFragment extends Fragment {
                     }else{
                         startMarker.setIcon(getResources().getDrawable(R.drawable.ic_videocam_black_24px));
                     }
-                    //startMarker.setInfoWindow(new InfoWindow(map));
 
-                    File f = new File(media.absolutePath);
-                    if (f.exists()) {
-                        startMarker.setImage(getResources().getDrawable(R.drawable.com_facebook_auth_dialog_background));
-
-                    } else {
-                        startMarker.setImage(getResources().getDrawable(R.drawable.com_facebook_auth_dialog_background));
-                    }
-
-                    startMarker.setInfoWindow(new InfoWindow(map));
+                    startMarker.setInfoWindow(new InfoWindow(getContext(),map, media.absolutePath, media.name));
                     startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
                     poiMarkers.add(startMarker);
                 }catch(NullPointerException e){
