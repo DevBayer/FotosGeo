@@ -5,11 +5,11 @@ package com.lluis.bayer.fotosgeo;
  */
 
 public class Media {
-    String name;
-    String type;
-    String absolutePath;
-    String lat;
-    String lon;
+    public String name;
+    public String type;
+    public String absolutePath;
+    public String lat;
+    public String lon;
 
     public Media() {
     }

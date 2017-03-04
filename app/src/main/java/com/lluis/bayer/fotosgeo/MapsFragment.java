@@ -92,7 +92,7 @@ public class MapsFragment extends Fragment {
                         startMarker.setImage(getResources().getDrawable(R.drawable.com_facebook_auth_dialog_background));
                     }
 
-                    startMarker.setInfoWindow(new CustomInfoWindow(map));
+                    startMarker.setInfoWindow(new InfoWindow(map));
                     startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
                     poiMarkers.add(startMarker);
                 }catch(NullPointerException e){
@@ -132,42 +132,4 @@ public class MapsFragment extends Fragment {
 
         return fragment;
     }
-
-
-    class CustomInfoWindow extends MarkerInfoWindow {
-        POI mSelectedPoi;
-
-        public CustomInfoWindow(MapView mapView) {
-            super(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mapView);
-            Button btn = (Button) (mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_moreinfo));
-            btn.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    if (mSelectedPoi.mUrl != null) {
-                        Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mSelectedPoi.mUrl));
-                        view.getContext().startActivity(myIntent);
-                    } else {
-                        Toast.makeText(view.getContext(), "Button clicked", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void onOpen(Object item) {
-            super.onOpen(item);
-            mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_moreinfo).setVisibility(View.VISIBLE);
-            Marker marker = (Marker) item;
-            mSelectedPoi = (POI) marker.getRelatedObject();
-
-            //8. put thumbnail image in bubble, fetching the thumbnail in background:
-            if (mSelectedPoi.mThumbnailPath != null) {
-                ImageView imageView = (ImageView) mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_image);
-                mSelectedPoi.fetchThumbnailOnThread(imageView);
-            }
-        }
-    }
-
-
-
-
 }
