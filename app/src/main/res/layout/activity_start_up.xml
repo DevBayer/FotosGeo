@@ -5,7 +5,7 @@
     android:id="@+id/activity_start_up"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lluis.bayer.fotosgeo.StartUpActivity"
+    tools:context="com.lluis.bayer.fotosgeo.Activities.StartUpActivity"
     android:background="@color/appPrimaryColor">
 
     <ImageView

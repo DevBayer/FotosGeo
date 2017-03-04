@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.lluis.bayer.fotosgeo.MapsFragment">
+    tools:context="com.lluis.bayer.fotosgeo.Fragments.MapsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <org.osmdroid.views.MapView

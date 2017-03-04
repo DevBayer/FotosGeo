@@ -1,4 +1,4 @@
-package com.lluis.bayer.fotosgeo;
+package com.lluis.bayer.fotosgeo.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,6 +31,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.lluis.bayer.fotosgeo.Fragments.GalleryFragment;
+import com.lluis.bayer.fotosgeo.Fragments.MapsFragment;
+import com.lluis.bayer.fotosgeo.R;
+import app.models.Media;
+import app.utils.GPSTracker;
+import app.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;

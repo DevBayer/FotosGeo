@@ -1,4 +1,4 @@
-package com.lluis.bayer.fotosgeo;
+package app.models;
 
 /**
  * Created by 23878410v on 17/02/17.

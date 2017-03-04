@@ -1,4 +1,4 @@
-package com.lluis.bayer.fotosgeo;
+package com.lluis.bayer.fotosgeo.Fragments;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +15,9 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.StorageReference;
+import com.lluis.bayer.fotosgeo.Activities.MainActivity;
+import com.lluis.bayer.fotosgeo.R;
+import app.models.Media;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.File;

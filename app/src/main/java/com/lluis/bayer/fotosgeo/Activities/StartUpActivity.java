@@ -1,4 +1,4 @@
-package com.lluis.bayer.fotosgeo;
+package com.lluis.bayer.fotosgeo.Activities;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -13,6 +13,7 @@ import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
+import com.lluis.bayer.fotosgeo.R;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.Arrays;
