@@ -4,12 +4,12 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bonuspack_bubble"
     android:orientation="horizontal"
-    android:paddingBottom="20dp"
+    android:paddingBottom="19dp"
     android:paddingEnd="2dp"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp"
-    android:paddingStart="4dp"
-    android:paddingTop="4dp">
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    android:paddingStart="2dp"
+    android:paddingTop="2dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
