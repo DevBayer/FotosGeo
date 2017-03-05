@@ -1,4 +1,4 @@
-package com.lluis.bayer.fotosgeo;
+package com.lluis.bayer.fotosgeo.Fragments;
 
 
 import android.content.Context;
@@ -11,6 +11,13 @@ import android.view.ViewGroup;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.lluis.bayer.fotosgeo.Activities.MainActivity;
+import com.lluis.bayer.fotosgeo.R;
+import com.wang.avi.AVLoadingIndicatorView;
+
+import app.adapters.InfoWindow;
+import app.models.Media;
+import app.utils.GPSTracker;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
@@ -27,6 +34,7 @@ public class MapsFragment extends Fragment {
 
     Context mContext;
     MapView map;
+    AVLoadingIndicatorView avi;
     public MapsFragment() {
         // Required empty public constructor
     }
@@ -38,6 +46,11 @@ public class MapsFragment extends Fragment {
         // Inflate the layout for this fragment
         mContext = getContext();
         View fragment = inflater.inflate(R.layout.fragment_maps, container, false);
+
+        avi= (AVLoadingIndicatorView) fragment.findViewById(R.id.avi);
+        avi.setIndicator("BallPulseIndicator");
+        avi.show();
+
         map = (MapView) fragment.findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.setBuiltInZoomControls(false);
@@ -70,15 +83,20 @@ public class MapsFragment extends Fragment {
                     }else{
                         startMarker.setIcon(getResources().getDrawable(R.drawable.ic_videocam_black_24px));
                     }
+
+                    startMarker.setInfoWindow(new InfoWindow(getContext(),map, media.absolutePath, media.name));
                     startMarker.setPosition(new GeoPoint(Double.parseDouble(media.lat), Double.parseDouble(media.lon)));
                     poiMarkers.add(startMarker);
+                    if(avi.isEnabled()){
+                        avi.hide();
+                    }
+                    poiMarkers.invalidate();
+                    map.invalidate();
                 }catch(NullPointerException e){
 
                 }catch(NumberFormatException e){
 
                 }
-                map.invalidate();
-                // ...
             }
 
             @Override
@@ -105,12 +123,7 @@ public class MapsFragment extends Fragment {
         ((MainActivity)getActivity()).getDB().addChildEventListener(childEventListener);
 
         map.getOverlays().add(poiMarkers);
-        map.invalidate();
 
         return fragment;
     }
-
-
-
-
 }

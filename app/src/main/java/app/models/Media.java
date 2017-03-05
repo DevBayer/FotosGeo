@@ -1,15 +1,15 @@
-package com.lluis.bayer.fotosgeo;
+package app.models;
 
 /**
  * Created by 23878410v on 17/02/17.
  */
 
 public class Media {
-    String name;
-    String type;
-    String absolutePath;
-    String lat;
-    String lon;
+    public String name;
+    public String type;
+    public String absolutePath;
+    public String lat;
+    public String lon;
 
     public Media() {
     }

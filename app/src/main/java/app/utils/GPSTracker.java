@@ -1,4 +1,4 @@
-package com.lluis.bayer.fotosgeo;
+package app.utils;
 
 import android.app.AlertDialog;
 import android.app.Service;
